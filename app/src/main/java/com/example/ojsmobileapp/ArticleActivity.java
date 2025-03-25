@@ -1,35 +1,43 @@
 package com.example.ojsmobileapp;
 
-import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import com.mindorks.placeholderview.*;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.util.List;
+
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
 
 public class ArticleActivity extends AppCompatActivity {
 
-    private PlaceHolderView placeHolderView;
-    private int issueId;
+    private RecyclerView recyclerView;
+    private ArticleAdapter articleAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_article);
 
-        placeHolderView = findViewById(R.id.placeHolderView);
-        issueId = getIntent().getIntExtra("issue_id", -1);
+        recyclerView = findViewById(R.id.recyclerView);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
+        int issueId = getIntent().getIntExtra("issue_id", -1);
+        if (issueId != -1) {
+            fetchArticles(issueId);
+        } else {
+            Toast.makeText(this, "Error al obtener la edición", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void fetchArticles(int issueId) {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://revistas.uteq.edu.ec/ws/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -40,66 +48,15 @@ public class ArticleActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Article>> call, Response<List<Article>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    for (Article article : response.body()) {
-                        placeHolderView.addView(new ArticleItem(ArticleActivity.this, article));
-                    }
+                    articleAdapter = new ArticleAdapter(ArticleActivity.this, response.body());
+                    recyclerView.setAdapter(articleAdapter);
                 }
             }
 
             @Override
             public void onFailure(Call<List<Article>> call, Throwable t) {
-                t.printStackTrace();
+                Toast.makeText(ArticleActivity.this, "Error al cargar artículos", Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    interface ApiService {
-        @GET("pubs.php")
-        Call<List<Article>> getArticles(@Query("i_id") int issueId);
-    }
-
-    class Article {
-        int article_id;
-        String title;
-        String doi;
-        String pdf;
-        String html;
-    }
-
-    @Layout(R.layout.item_article)
-    class ArticleItem {
-        private Context context;
-        private Article article;
-
-        @View(R.id.txtTitle)
-        private TextView txtTitle;
-
-        @View(R.id.btnHtml)
-        private Button btnHtml;
-
-        @View(R.id.btnPdf)
-        private Button btnPdf;
-
-        public ArticleItem(Context context, Article article) {
-            this.context = context;
-            this.article = article;
-        }
-
-        @Resolve
-        private void onResolved() {
-            txtTitle.setText(article.title);
-        }
-
-        @Click(R.id.btnHtml)
-        private void onHtmlClick() {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(article.html));
-            context.startActivity(intent);
-        }
-
-        @Click(R.id.btnPdf)
-        private void onPdfClick() {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(article.pdf));
-            context.startActivity(intent);
-        }
     }
 }

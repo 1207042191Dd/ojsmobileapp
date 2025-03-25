@@ -4,8 +4,19 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <com.mindorks.placeholderview.PlaceHolderView
-        android:id="@+id/placeHolderView"
+    <TextView
+        android:id="@+id/txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="OJS Mobile APP"
+        android:textAlignment="center"
+        android:textSize="30dp"
+        android:textStyle="bold" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 </LinearLayout>

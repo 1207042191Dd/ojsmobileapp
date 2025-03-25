@@ -1,28 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="8dp"
-    android:background="@android:color/white">
-
+    android:layout_height="match_parent"
+    android:orientation="vertical">
     <TextView
-        android:id="@+id/txtTitle"
+        android:id="@+id/txt1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:text="Título del Artículo"/>
-
-    <Button
-        android:id="@+id/btnHtml"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ver HTML"/>
-
-    <Button
-        android:id="@+id/btnPdf"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Ver PDF"/>
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:text="Artículos"
+        android:textAlignment="center"
+        android:textSize="26dp"
+        android:textStyle="bold" />
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </LinearLayout>
